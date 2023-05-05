@@ -25,6 +25,7 @@ import {
   useDarkMode,
   useJupiterOutputTokens,
   useSwapContext,
+  useZeroXOutputTokens,
 } from "@coral-xyz/recoil";
 import { styles, useCustomTheme } from "@coral-xyz/themes";
 import { ExpandMore, SwapVert } from "@mui/icons-material";
@@ -242,9 +243,9 @@ export function Swap({ blockchain }: { blockchain: Blockchain }) {
     });
   }, [nav, isDark]);
 
-  if (blockchain && blockchain !== Blockchain.SOLANA) {
-    throw new Error("only Solana swaps are supported currently");
-  }
+  // if (blockchain && blockchain !== Blockchain.SOLANA) {
+  //   throw new Error("only Solana swaps are supported currently");
+  // }
 
   return <_Swap />;
 }
@@ -470,7 +471,9 @@ const ConfirmSwapButton = () => {
     isLoadingRoutes,
     isLoadingTransactions,
   } = useSwapContext();
+  const { blockchain } = useActiveWallet();
   const tokenAccounts = useJupiterOutputTokens(fromMint);
+  const tokenAddresses = useZeroXOutputTokens(fromMint);
 
   // Parameters aren't all entered or the swap data is loading
   const isIncomplete =
@@ -482,7 +485,11 @@ const ConfirmSwapButton = () => {
     return <InsufficientBalanceButton />;
   } else if (feeExceedsBalance && !isIncomplete) {
     return <InsufficientFeeButton />;
-  } else if (isJupiterError || tokenAccounts.length === 0) {
+  } else if (
+    isJupiterError ||
+    (blockchain == Blockchain.SOLANA && tokenAccounts.length === 0) ||
+    (blockchain == Blockchain.ETHEREUM && tokenAddresses.length === 0)
+  ) {
     return <SwapUnavailableButton />;
   }
 
@@ -650,7 +657,7 @@ function SwapInfo({ compact = true }: { compact?: boolean }) {
     transactionFees,
     swapFee,
   } = useSwapContext();
-
+  const { blockchain } = useActiveWallet();
   // Loading indicator when routes are being loaded due to polling
   if (isLoadingRoutes || isLoadingTransactions) {
     return (
@@ -720,8 +727,15 @@ function SwapInfo({ compact = true }: { compact?: boolean }) {
             ? priceImpactPct.toFixed(2)
             : "< 0.1"
         }%`,
+        // networkFee: transactionFees
+        //   ? `~ ${approximateAmount(transactionFees.total)} SOL`
+        //   : "-",
         networkFee: transactionFees
-          ? `~ ${approximateAmount(transactionFees.total)} SOL`
+          ? blockchain === Blockchain.SOLANA
+            ? `~ ${approximateAmount(transactionFees.total)} SOL`
+            : blockchain === Blockchain.ETHEREUM
+            ? `~ ${ethers.utils.formatEther(transactionFees.total)} ETH`
+            : "-"
           : "-",
         swapFee,
         transactionFees,
@@ -783,7 +797,13 @@ function SwapInfoRows({
                     {description}
                   </th>
                   <td className={classes.feesTooltipTableValue}>
-                    {approximateAmount(value)} SOL
+                    {wallet.blockchain === Blockchain.SOLANA ? (
+                      <>{approximateAmount(value)} SOL</>
+                    ) : wallet.blockchain === Blockchain.ETHEREUM ? (
+                      <>{ethers.utils.formatEther(value)} ETH</>
+                    ) : (
+                      "-"
+                    )}
                   </td>
                 </tr>
               )
@@ -938,7 +958,11 @@ export function SwapSelectToken({
   ) as Array<TokenDataWithPrice>;
 
   const onClickRow = (_blockchain: Blockchain, token: Token) => {
-    setMint(token.mint!);
+    if (_blockchain === Blockchain.SOLANA) {
+      setMint(token.mint!);
+    } else if (_blockchain === Blockchain.ETHEREUM) {
+      setMint(token.address);
+    }
     nav.pop();
   };
 
