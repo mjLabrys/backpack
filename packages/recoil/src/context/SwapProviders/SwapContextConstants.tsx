@@ -96,4 +96,5 @@ export type SwapContext = {
   isLoadingRoutes: boolean;
   isLoadingTransactions: boolean;
   isJupiterError: boolean;
+  canSwap: boolean;
 };

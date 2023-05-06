@@ -1,8 +1,11 @@
 import type { Token } from "@@types/types";
-import type { Blockchain } from "@coral-xyz/common";
+import type { Blockchain, Nft } from "@coral-xyz/common";
 
 import { useCallback } from "react";
 
+import Constants from "expo-constants";
+
+import { parseNftName } from "@coral-xyz/common";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // import { getHeaderTitle } from "@react-navigation/elements";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -18,6 +21,7 @@ import {
 import { useTheme } from "~hooks/useTheme";
 import { AccountSettingsNavigator } from "~navigation/AccountSettingsNavigator";
 // import AppListScreen from "~screens/Unlocked/AppListScreen"; // TURNED off bc of app store restrictions (temporarily)
+import { ChatNavigator } from "~navigation/ChatNavigator";
 import { BalancesNavigator } from "~screens/Unlocked/BalancesScreen";
 import {
   DepositListScreen,
@@ -29,6 +33,7 @@ import {
   SendTokenSelectRecipientScreen,
   SendTokenListScreen,
   SendTokenConfirmScreen,
+  SendNFTConfirmScreen,
 } from "~screens/Unlocked/SendTokenScreen";
 import { SwapTokenScreen } from "~screens/Unlocked/SwapTokenScreen";
 import { WalletListScreen } from "~screens/Unlocked/WalletListScreen";
@@ -50,6 +55,16 @@ export type UnlockedNavigatorStackParamList = {
   SendTokenConfirm: {
     blockchain: Blockchain;
     token: Token;
+    to: {
+      walletName?: string | undefined; // TBD
+      address: string;
+      username: string;
+      image: string;
+      uuid: string;
+    };
+  };
+  SendNFTConfirm: {
+    nft: Nft;
     to: {
       walletName?: string | undefined; // TBD
       address: string;
@@ -81,7 +96,11 @@ export function UnlockedNavigator(): JSX.Element {
           headerBackImage: IconCloseModal,
         }}
       >
-        <Stack.Screen name="RecentActivity" component={RecentActivityScreen} />
+        <Stack.Screen
+          name="RecentActivity"
+          component={RecentActivityScreen}
+          options={{ title: "Recent Activity" }}
+        />
         <Stack.Screen
           options={{ title: "Deposit" }}
           name="DepositList"
@@ -118,6 +137,16 @@ export function UnlockedNavigator(): JSX.Element {
           }}
         />
         <Stack.Screen
+          name="SendNFTConfirm"
+          component={SendNFTConfirmScreen}
+          options={({ route }) => {
+            const { nft } = route.params;
+            return {
+              title: parseNftName(nft),
+            };
+          }}
+        />
+        <Stack.Screen
           options={{ title: "Swap" }}
           name="SwapModal"
           component={SwapTokenScreen}
@@ -136,6 +165,7 @@ type UnlockedTabNavigatorParamList = {
   Balances: undefined;
   Applications: undefined;
   Collectibles: undefined;
+  Chat: undefined;
 };
 
 const Tab = createBottomTabNavigator<UnlockedTabNavigatorParamList>();
@@ -149,7 +179,7 @@ function UnlockedBottomTabNavigator(): JSX.Element {
         return TabIconApps;
       case "Collectibles":
         return TabIconNfts;
-      case "Messages":
+      case "Chat":
         return TabIconMessages;
       default:
         return TabIconBalances;
@@ -171,6 +201,9 @@ function UnlockedBottomTabNavigator(): JSX.Element {
     >
       <Tab.Screen name="Balances" component={BalancesNavigator} />
       <Tab.Screen name="Collectibles" component={NftCollectiblesNavigator} />
+      {Constants.expoConfig.extra.FEATURE_MOBILE_CHAT ? (
+        <Tab.Screen name="Chat" component={ChatNavigator} />
+      ) : null}
     </Tab.Navigator>
   );
 }

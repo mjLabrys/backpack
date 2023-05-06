@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { proxyImageUrl } from "@coral-xyz/common";
+import { externalResourceUri, proxyImageUrl } from "@coral-xyz/common";
 import { Skeleton } from "@mui/material";
 
 type ImgProps = React.DetailedHTMLProps<
@@ -10,11 +10,13 @@ export const ProxyImage = React.memo(function ProxyImage({
   removeOnError,
   loadingStyles,
   size,
+  original,
   ...imgProps
 }: {
   removeOnError?: boolean;
   loadingStyles?: React.CSSProperties;
   size?: number;
+  original?: boolean;
 } & ImgProps) {
   const placeholderRef = useRef<HTMLSpanElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -34,6 +36,7 @@ export const ProxyImage = React.memo(function ProxyImage({
   const visuallyHidden: React.CSSProperties = {
     position: "absolute",
     top: "0px",
+    visibility: "hidden",
   };
 
   useEffect(() => {
@@ -50,23 +53,25 @@ export const ProxyImage = React.memo(function ProxyImage({
           imageRef.current.style.visibility = "visible";
         }
       }
-    }, 1000);
+    }, 2000);
   }, []);
 
   return (
     <>
-      <Skeleton
-        style={{
-          height: "100%",
-          width: "100%",
-          transform: "none",
-          transformOrigin: "none",
-          ...(imgProps.style ?? {}),
-          ...(loadingStyles ?? {}),
-        }}
-        ref={placeholderRef}
-        className={imgProps.className}
-      />
+      {imgProps.src ? (
+        <Skeleton
+          style={{
+            height: "100%",
+            width: "100%",
+            transform: "none",
+            transformOrigin: "none",
+            ...(imgProps.style ?? {}),
+            ...(loadingStyles ?? {}),
+          }}
+          ref={placeholderRef}
+          className={imgProps.className}
+        />
+      ) : null}
       {imgProps.src ? (
         <img
           loading="lazy"
@@ -99,7 +104,11 @@ export const ProxyImage = React.memo(function ProxyImage({
               return count + 1;
             });
           }}
-          src={proxyImageUrl(imgProps.src ?? "", size)}
+          src={
+            original
+              ? externalResourceUri(imgProps.src, { cached: true })
+              : proxyImageUrl(imgProps.src ?? "", size)
+          }
         />
       ) : (
         <Skeleton
@@ -111,7 +120,6 @@ export const ProxyImage = React.memo(function ProxyImage({
             ...(imgProps.style ?? {}),
             ...(loadingStyles ?? {}),
           }}
-          ref={placeholderRef}
           className={imgProps.className}
         />
       )}

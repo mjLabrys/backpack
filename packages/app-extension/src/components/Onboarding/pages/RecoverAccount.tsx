@@ -19,7 +19,9 @@ import { AlreadyOnboarded } from "./AlreadyOnboarded";
 import { Finish } from "./Finish";
 import { KeyringTypeSelector } from "./KeyringTypeSelector";
 import { MnemonicSearch } from "./MnemonicSearch";
+import { NotificationsPermission } from "./NotificationsPermission";
 import { RecoverAccountUsernameForm } from "./RecoverAccountUsernameForm";
+import { TwitterConnect } from "./TwitterConnect";
 
 export const RecoverAccount = ({
   onClose,
@@ -68,6 +70,7 @@ export const RecoverAccount = ({
   });
 
   const steps = [
+    // <TwitterConnect key="TwitterConnect" />,
     <RecoverAccountUsernameForm
       key="RecoverAccountUsernameForm"
       onNext={(
@@ -134,6 +137,7 @@ export const RecoverAccount = ({
               await handlePrivateKeyInput(result);
               nextStep();
             }}
+          onboarding
           />,
         ]
       : []),
@@ -148,6 +152,7 @@ export const RecoverAccount = ({
           />,
         ]
       : []),
+    <NotificationsPermission key="NotificationsPermission" onNext={nextStep} />,
     <Finish key="Finish" isAddingAccount={isAddingAccount} />,
   ];
 

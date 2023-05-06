@@ -58,6 +58,7 @@ insert_permissions:
     permission:
       check: {}
       columns:
+        - id
         - invitation_id
         - referrer_id
         - username
@@ -82,6 +83,7 @@ select_permissions:
   - role: one_xnft
     permission:
       columns:
+        - avatar_nft
         - created_at
         - id
         - is_internal
@@ -106,3 +108,9 @@ update_permissions:
         - updated_at
       filter: {}
       check: null
+  - role: one_xnft
+    permission:
+      columns:
+        - avatar_nft
+      filter: {}
+      check: {}

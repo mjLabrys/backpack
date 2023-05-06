@@ -173,6 +173,11 @@ export function SolanaSwapProvider({
   const toTokens = useJupiterOutputTokens(fromMint);
   const toToken = toTokens.find((t) => t.mint === toMint);
 
+  // Only allow users to switch input and output tokens if they currently
+  // have a balance of the output token
+  const canSwitch =
+    toToken?.mint === WSOL_MINT || fromTokens.some((t) => t.mint === toMint);
+
   let availableForSwap = fromToken
     ? BigNumber.from(fromToken.nativeBalance)
     : Zero;
@@ -501,6 +506,7 @@ export function SolanaSwapProvider({
         availableForSwap,
         exceedsBalance,
         feeExceedsBalance,
+        canSwitch,
       }}
     >
       {children}
