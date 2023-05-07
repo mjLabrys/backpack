@@ -97,4 +97,5 @@ export type SwapContext = {
   isLoadingTransactions: boolean;
   isJupiterError: boolean;
   canSwap: boolean;
+  canSwitch: boolean;
 };

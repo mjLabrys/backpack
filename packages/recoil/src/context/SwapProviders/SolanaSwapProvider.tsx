@@ -506,6 +506,7 @@ export function SolanaSwapProvider({
         availableForSwap,
         exceedsBalance,
         feeExceedsBalance,
+        canSwap: !availableForSwap.isZero(),
         canSwitch,
       }}
     >

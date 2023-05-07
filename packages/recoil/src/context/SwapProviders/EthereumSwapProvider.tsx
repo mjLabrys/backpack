@@ -118,7 +118,9 @@ export function EthereumSwapProvider({
   const toToken = toTokens.find((t) => t.address === toMint);
 
   // TODO: add check to ensure they have the balance of output token
-  const canSwitch = true;
+  const canSwitch =
+    toToken?.mint === ETH_NATIVE_MINT ||
+    fromTokens.some((t) => t.address === toMint);
 
   useEffect(() => {
     console.log("toTokenstoTokenstoTokens: ", toTokens);
@@ -255,6 +257,7 @@ export function EthereumSwapProvider({
         availableForSwap,
         exceedsBalance,
         feeExceedsBalance: undefined,
+        canSwap: !availableForSwap.isZero(),
         canSwitch,
       }}
     >
