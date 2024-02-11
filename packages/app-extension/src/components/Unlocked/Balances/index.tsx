@@ -18,8 +18,9 @@ type Token = ReturnType<typeof useBlockchainTokensSorted>[number];
 export function Balances() {
   const { push } = useNavigation();
   const swapEnabled =
-    useAllWalletsDisplayed().find((w) => w.blockchain === Blockchain.SOLANA) !==
-    undefined;
+    useAllWalletsDisplayed().find(
+      (w) => w.blockchain === Blockchain.SOLANA || Blockchain.ETHEREUM
+    ) !== undefined;
 
   const onClickTokenRow = (
     blockchain: Blockchain,
