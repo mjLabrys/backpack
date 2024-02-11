@@ -90,6 +90,9 @@ export function Preferences() {
     "Trusted Sites": {
       onClick: () => nav.push("preferences-trusted-sites"),
     },
+    "Domain Website Resolver": {
+      onClick: () => nav.push("preferences-domain-content-resolver"),
+    },
   };
 
   if (BACKPACK_FEATURE_LIGHT_MODE) {

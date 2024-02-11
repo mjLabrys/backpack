@@ -145,6 +145,7 @@ const options = {
     options: "./src/options/index.tsx",
     permissions: "./src/permissions/index.tsx",
     popup: "./src/index.tsx",
+    redirects: "./src/redirects/index.tsx",
     warning: "./src/warning.ts",
     contentScript: "./src/contentScript/index.ts",
     // injected: "../provider-injection/dist/browser/index.js",

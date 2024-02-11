@@ -11,7 +11,8 @@ import {
 import {
   useActiveWallet,
   useBackgroundClient,
-  useKeyringHasMnemonic, useWalletName,
+  useKeyringHasMnemonic,
+  useWalletName,
 } from "@coral-xyz/recoil";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";

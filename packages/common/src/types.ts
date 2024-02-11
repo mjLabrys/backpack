@@ -213,6 +213,7 @@ export type Preferences = {
   approvedOrigins: string[];
   darkMode: boolean;
   developerMode: boolean;
+  websiteDNSResolution: WebsiteDNSResolution;
   aggregateWallets: boolean;
   solana: SolanaData;
   ethereum: EthereumData;
@@ -240,6 +241,16 @@ type EthereumData = {
   explorer: string;
   connectionUrl: string;
   chainId: string;
+};
+
+type WebsiteDNSResolution = {
+  ipfsGateway: string;
+  supportedWebDNSNetwork: SupportedWebDNSNetworkResolutionData;
+};
+
+// Object to store enabled/disabled web dns resolution for supported networks.
+export type SupportedWebDNSNetworkResolutionData = {
+  [network in Blockchain]: boolean;
 };
 
 // Sender is the trusted descriptor of the sender of a message into

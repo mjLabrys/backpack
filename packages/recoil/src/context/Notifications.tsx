@@ -3,6 +3,7 @@ import type {
   AutolockSettings,
   Blockchain,
   Notification,
+  SupportedWebDNSNetworkResolutionData,
 } from "@coral-xyz/common";
 import {
   BackgroundSolanaConnection,
@@ -17,6 +18,8 @@ import {
   NOTIFICATION_BLOCKCHAIN_KEYRING_DELETED,
   NOTIFICATION_DARK_MODE_UPDATED,
   NOTIFICATION_DEVELOPER_MODE_UPDATED,
+  NOTIFICATION_DOMAIN_CONTENT_IPFS_GATEWAY_UPDATED,
+  NOTIFICATION_ENABLED_DNS_RESOLUTION_NETWORKS_UPDATED,
   NOTIFICATION_ETHEREUM_ACTIVE_WALLET_UPDATED,
   NOTIFICATION_ETHEREUM_CHAIN_ID_UPDATED,
   NOTIFICATION_ETHEREUM_CONNECTION_URL_UPDATED,
@@ -133,6 +136,36 @@ export function NotificationsProvider(props: any) {
       };
     });
   };
+
+  const setDomainContentIPFSGateway = (ipfsGateway: string) => {
+    setPreferences((current) => {
+      return {
+        ...current,
+        websiteDNSResolution: {
+          ...current.websiteDNSResolution,
+          ipfsGateway,
+        },
+      };
+    });
+  };
+
+  const setEnabledWebDNSResolutionNetworks = (
+    supportedWebDNSNetwork: SupportedWebDNSNetworkResolutionData
+  ) => {
+    setPreferences((current) => {
+      return {
+        ...current,
+        websiteDNSResolution: {
+          ...current.websiteDNSResolution,
+          supportedWebDNSNetwork: {
+            ...current.websiteDNSResolution.supportedWebDNSNetwork,
+            ...supportedWebDNSNetwork,
+          },
+        },
+      };
+    });
+  };
+
   const setIsAggregateWallets = (aggregateWallets: boolean) => {
     setPreferences((current) => {
       return {
@@ -276,6 +309,12 @@ export function NotificationsProvider(props: any) {
           break;
         case NOTIFICATION_DEVELOPER_MODE_UPDATED:
           handleIsDeveloperModeUpdated(notif);
+          break;
+        case NOTIFICATION_DOMAIN_CONTENT_IPFS_GATEWAY_UPDATED:
+          handleDomainContentIPFSGatewayUpdated(notif);
+          break;
+        case NOTIFICATION_ENABLED_DNS_RESOLUTION_NETWORKS_UPDATED:
+          handleEnabledDNSResolutionNetworksUpdated(notif);
           break;
         case NOTIFICATION_AGGREGATE_WALLETS_UPDATED:
           handleAggregateWalletsUpdated(notif);
@@ -588,6 +627,16 @@ export function NotificationsProvider(props: any) {
 
     const handleIsDeveloperModeUpdated = (notif: Notification) => {
       setIsDeveloperMode(notif.data.developerMode);
+    };
+
+    const handleDomainContentIPFSGatewayUpdated = (notif: Notification) => {
+      setDomainContentIPFSGateway(notif.data.websiteDNSResolution.ipfsGateway);
+    };
+
+    const handleEnabledDNSResolutionNetworksUpdated = (notif: Notification) => {
+      setEnabledWebDNSResolutionNetworks(
+        notif.data.websiteDNSResolution.supportedWebDNSNetwork
+      );
     };
 
     const handleAggregateWalletsUpdated = (notif: Notification) => {

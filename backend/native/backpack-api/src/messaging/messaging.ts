@@ -8,10 +8,9 @@ import {
 import type {
   MessageKind,
   MessageMetadata,
-  SubscriptionType} from "@coral-xyz/common";
-import {
-  CHAT_MESSAGES
+  SubscriptionType,
 } from "@coral-xyz/common";
+import { CHAT_MESSAGES } from "@coral-xyz/common";
 
 import { Redis } from "../Redis";
 

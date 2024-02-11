@@ -1,3 +1,4 @@
+import type { Blockchain } from "@coral-xyz/common";
 import { UI_RPC_METHOD_APPROVED_ORIGINS_UPDATE } from "@coral-xyz/common";
 import { useRecoilValue } from "recoil";
 
@@ -34,6 +35,17 @@ export function useDarkMode(): boolean {
 
 export function useDeveloperMode(): boolean {
   return useRecoilValue(atoms.isDeveloperMode)!;
+}
+
+export function useIpfsGateway(): string {
+  return useRecoilValue(atoms.domainContentIpfsGateway)!;
+}
+
+export function useSupportedDomainNameNetwork(blockchain: Blockchain): boolean {
+  const supportedNetworks = useRecoilValue(atoms.enabledDNSResolverNetworks);
+  return blockchain in supportedNetworks
+    ? supportedNetworks[blockchain]
+    : false;
 }
 
 export function useIsAggregateWallets(): boolean {

@@ -187,16 +187,18 @@ export const XnftDetail: React.FC<{ xnft: any }> = ({ xnft }) => {
             marginBottom: "15px",
           }}
         />
-        {xnft.metadata?.xnft ? <Typography
-          sx={{
+        {xnft.metadata?.xnft ? (
+          <Typography
+            sx={{
               color: theme.custom.colors.fontColor,
               fontSize: "12px",
               marginBottom: "15px",
               textAlign: "center",
             }}
           >
-          v{xnft.metadata.xnft.version}
-        </Typography> : null}
+            v{xnft.metadata.xnft.version}
+          </Typography>
+        ) : null}
         <Button
           disabled={isDisabled}
           disableRipple

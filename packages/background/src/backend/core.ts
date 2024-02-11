@@ -8,6 +8,7 @@ import type {
   PrivateKeyKeyringInit,
   ServerPublicKey,
   SignedWalletDescriptor,
+  SupportedWebDNSNetworkResolutionData,
   WalletDescriptor,
   XnftPreference,
 } from "@coral-xyz/common";
@@ -16,6 +17,7 @@ import {
   BACKEND_EVENT,
   Blockchain,
   DEFAULT_DARK_MODE,
+  DEFAULT_GATEWAY,
   defaultPreferences,
   deserializeTransaction,
   EthereumConnectionUrl,
@@ -32,6 +34,8 @@ import {
   NOTIFICATION_BLOCKCHAIN_KEYRING_DELETED,
   NOTIFICATION_DARK_MODE_UPDATED,
   NOTIFICATION_DEVELOPER_MODE_UPDATED,
+  NOTIFICATION_DOMAIN_CONTENT_IPFS_GATEWAY_UPDATED,
+  NOTIFICATION_ENABLED_DNS_RESOLUTION_NETWORKS_UPDATED,
   NOTIFICATION_ETHEREUM_ACTIVE_WALLET_UPDATED,
   NOTIFICATION_ETHEREUM_CHAIN_ID_UPDATED,
   NOTIFICATION_ETHEREUM_CONNECTION_URL_UPDATED,
@@ -1702,6 +1706,81 @@ export class Backend {
       name: NOTIFICATION_AGGREGATE_WALLETS_UPDATED,
       data: {
         aggregateWallets,
+      },
+    });
+    return SUCCESS_RESPONSE;
+  }
+
+  async domainContentIPFSGatewayRead(uuid: string): Promise<string> {
+    const data = await store.getWalletDataForUser(uuid);
+    return data.websiteDNSResolution?.ipfsGateway ?? DEFAULT_GATEWAY;
+  }
+
+  async domainContentIPFSGatewayUpdate(ipfsGateway: string): Promise<boolean> {
+    const uuid = this.keyringStore.activeUserKeyring.uuid;
+    const data = await store.getWalletDataForUser(uuid);
+
+    if (data.websiteDNSResolution?.ipfsGateway === ipfsGateway) {
+      return false;
+    }
+
+    await store.setWalletDataForUser(uuid, {
+      ...data,
+      websiteDNSResolution: {
+        ...data.websiteDNSResolution,
+        ipfsGateway,
+      },
+    });
+    this.events.emit(BACKEND_EVENT, {
+      name: NOTIFICATION_DOMAIN_CONTENT_IPFS_GATEWAY_UPDATED,
+      data: {
+        websiteDNSResolution: {
+          ipfsGateway,
+        },
+      },
+    });
+
+    return true;
+  }
+
+  async supportedWebDNSNetworkRead(
+    uuid: string,
+    blockchain: Blockchain
+  ): Promise<Boolean> {
+    const data = await store.getWalletDataForUser(uuid);
+    const supportedNetworks = data.websiteDNSResolution.supportedWebDNSNetwork;
+
+    return blockchain in supportedNetworks
+      ? supportedNetworks[blockchain]
+      : false;
+  }
+
+  async supportedWebDNSNetworkUpdate(
+    blockchain: Blockchain,
+    isEnabled: boolean
+  ): Promise<string> {
+    const uuid = this.keyringStore.activeUserKeyring.uuid;
+    const data = await store.getWalletDataForUser(uuid);
+
+    await store.setWalletDataForUser(uuid, {
+      ...data,
+      websiteDNSResolution: {
+        ...data.websiteDNSResolution,
+        supportedWebDNSNetwork: {
+          ...data.websiteDNSResolution.supportedWebDNSNetwork,
+          [blockchain]: isEnabled,
+        },
+      },
+    });
+
+    this.events.emit(BACKEND_EVENT, {
+      name: NOTIFICATION_ENABLED_DNS_RESOLUTION_NETWORKS_UPDATED,
+      data: {
+        websiteDNSResolution: {
+          supportedWebDNSNetwork: {
+            [blockchain]: isEnabled,
+          },
+        },
       },
     });
     return SUCCESS_RESPONSE;
