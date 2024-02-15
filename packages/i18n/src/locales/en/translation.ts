@@ -917,5 +917,13 @@ const Translations = {
     otp_app_title: "Authentication app code",
     button_label: "Submit",
   },
+  ipfs_gateways: "IPFS Gateway",
+  custom: "Custom",
+  gateway: "Gateway",
+  gateway_url: "Gateway URL",
+  switch: "Switch",
+  ipfs_gateway: "IPFS Gateway",
+  custom_ipfs_gateway: "Custom IPFS Gateway",
+  web_domain_resolver: "Web Domain Resolver",
 };
 export default Translations;

@@ -480,5 +480,13 @@ const Translations: DeepPartial<typeof EnglishTranslations> = {
     "निम्नलिखित में से एक का उपयोग करके एक बटुआ को पुनः प्राप्त करें:",
   private_key_warning: "अपनी निजी कुंजी कभी न दें",
   messages: "संदेश",
+  ipfs_gateways: "IPFS गेटवे",
+  custom: "कस्टम",
+  gateway: "गेटवे",
+  gateway_url: "गेटवे URL",
+  switch: "स्विच",
+  ipfs_gateway: "IPFS गेटवे",
+  custom_ipfs_gateway: "कस्टम IPFS गेटवे",
+  web_domain_resolver: "वेब डोमेन रिज़ॉल्वर",
 };
 export default Translations;

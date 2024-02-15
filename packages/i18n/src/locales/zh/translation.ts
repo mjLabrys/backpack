@@ -692,5 +692,13 @@ const Translations: DeepPartial<typeof EnglishTranslations> = {
   cancel_all: "取消全部",
   cancel_order: "取消订单",
   remaining: "剩余",
+  ipfs_gateways: "IPFS网关",
+  custom: "自定义",
+  gateway: "网关",
+  gateway_url: "网关URL",
+  switch: "切换",
+  ipfs_gateway: "IPFS网关",
+  custom_ipfs_gateway: "自定义IPFS网关",
+  web_domain_resolver: "网域解析器",
 };
 export default Translations;

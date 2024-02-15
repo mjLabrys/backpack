@@ -95,6 +95,9 @@ export function Preferences() {
         />
       ),
     },
+    [t("web_domain_resolver")]: {
+      onClick: () => navigation.push(Routes.PreferencesWebDomainResolverScreen),
+    },
     [t("hidden_tokens")]: {
       onClick: () => navigation.push(Routes.PreferencesHiddenTokensScreen),
     },
