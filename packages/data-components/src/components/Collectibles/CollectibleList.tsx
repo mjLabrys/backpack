@@ -1,6 +1,7 @@
-import { type ReactNode, useCallback } from "react";
-import { FlatList, type ListRenderItem, View } from "react-native";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { Dimensions, FlatList, type ListRenderItem } from "react-native";
 import { useMedia, YStack } from "@coral-xyz/tamagui";
+import { Platform } from "expo-modules-core";
 
 import type { DataComponentScreenProps } from "../common";
 
@@ -13,26 +14,49 @@ export type CollectibleListProps = {
   header?: ReactNode;
 };
 
+// Placeholder collection name
+const placeholder = "placeholder-lads-ftw";
+
 export function CollectibleList({
-  collectibleGroups,
+  collectibleGroups: baseCollectibleGroups,
   emptyStateComponent,
   header,
 }: CollectibleListProps) {
   const media = useMedia();
-
-  const numColumns = media.sm
-    ? 2
-    : media.md
-    ? 3
-    : media.lg
-    ? 4
-    : media.xl
-    ? 5
-    : media.xxl
-    ? 6
-    : 7;
-
+  const imageBoxSize = Platform.select({ native: 165, web: 165 });
   const gap = media.sm ? 16 : media.md ? 20 : 24;
+  const [numColumns, setNumColumns] = useState(2);
+
+  // Handles dynamic column count and update
+  useEffect(() => {
+    const updateColumns = () => {
+      const width = Dimensions.get("window").width;
+      const columns = Math.floor((width - gap) / (imageBoxSize + gap));
+      setNumColumns(Math.max(columns, 2));
+    };
+
+    // Subscribe to dimension changes
+    const subscription = Dimensions.addEventListener("change", updateColumns);
+    updateColumns(); // Initial setup
+
+    return () => {
+      subscription.remove();
+    };
+  }, [gap, imageBoxSize]);
+
+  // Add placeholder items to fill the last row when the number of items is not a multiple of the number of columns
+  // Not the proudest implementation, but required to keep the grid layout consistent in flatList, otherwise use a different library or change layouts.
+  const lastColumnItems = baseCollectibleGroups.length % numColumns;
+  const collectibleGroups =
+    baseCollectibleGroups.length % numColumns !== numColumns
+      ? [
+          ...baseCollectibleGroups,
+          ...Array(numColumns - lastColumnItems).fill({
+            collection: placeholder,
+            data: [],
+          }),
+        ]
+      : baseCollectibleGroups;
 
   /**
    * Returns the child component key for an item.
@@ -50,8 +74,12 @@ export function CollectibleList({
    * @returns {ReactElement}
    */
   const renderItem: ListRenderItem<CollectibleGroup> = useCallback(
-    ({ item }) => <CollectibleCard key={item.collection} collectibles={item} />,
-    []
+    ({ item }) => {
+      if (item.collection === placeholder)
+        return <YStack key={item.collection} style={{ width: imageBoxSize }} />;
+      return <CollectibleCard key={item.collection} collectibles={item} />;
+    },
+    [imageBoxSize]
   );
 
   return (
@@ -68,10 +96,9 @@ export function CollectibleList({
             gap: 14,
             paddingHorizontal: 16,
             paddingBottom: 16,
-            //            justifyContent: "center",
             minHeight: "100%",
           }}
-          columnWrapperStyle={{ gap }}
+          columnWrapperStyle={{ gap, justifyContent: "space-around" }}
           numColumns={numColumns}
           data={collectibleGroups}
           keyExtractor={keyExtractor}
