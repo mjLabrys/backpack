@@ -41,7 +41,10 @@ export function SwapProvider({
 }) {
   const { publicKey, blockchain } = useActiveWallet();
   const walletPublicKey = publicKey.toString();
-  const defaultFromTokenMint = useMintForAssetId(defaultFromAssetId);
+  const defaultFromTokenMint = useMintForAssetId(
+    defaultFromAssetId,
+    blockchain
+  );
 
   if (defaultFromTokenMint === null) {
     throw new Error("invariant violation");

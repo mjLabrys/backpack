@@ -1,10 +1,10 @@
-import { Blockchain } from "@coral-xyz/common";
 import {
   type ProviderId,
   TokenBalances as _TokenBalances,
 } from "@coral-xyz/data-components";
 import { useTranslation } from "@coral-xyz/i18n";
 import { useActiveWallet, useIsDevnet } from "@coral-xyz/recoil";
+import { swapEnabledNetworks } from "@coral-xyz/secure-background/legacyCommon";
 import {
   temporarilyMakeStylesForBrowserExtension,
   XStack,
@@ -35,28 +35,27 @@ export function TokenBalances() {
   const { publicKey, blockchain } = useActiveWallet();
   const navigation = useNavigation<any>();
   const isDevnet = useIsDevnet();
-  const swapEnabled = blockchain === Blockchain.SOLANA && !isDevnet;
-
+  const swapEnabled = swapEnabledNetworks.includes(blockchain) && !isDevnet;
   return (
     <_TokenBalances
       address={publicKey}
       providerId={blockchain.toUpperCase() as ProviderId}
       fetchPolicy="cache-and-network"
       onItemClick={async ({
+        id,
+        displayAmount,
+        symbol,
+        token,
+        tokenAccount,
+      }) => {
+        navigation.push(Routes.TokensDetailScreen, {
           id,
           displayAmount,
-          symbol,
+          symbol: symbol,
           token,
-          tokenAccount,
-        }) => {
-          navigation.push(Routes.TokensDetailScreen, {
-            id,
-            displayAmount,
-            symbol: symbol,
-            token,
-            tokenAddress: tokenAccount,
-          });
-        }}
+          tokenAddress: tokenAccount,
+        });
+      }}
       tableFooterComponent={
         <XStack
           className={classes.settings}
@@ -69,13 +68,13 @@ export function TokenBalances() {
           marginBottom={8}
           maxWidth="fit-content"
           onPress={() => {
-              navigation.push(Routes.TokensDisplayManagementScreen);
-            }}
-          >
+            navigation.push(Routes.TokensDisplayManagementScreen);
+          }}
+        >
           <VisibilityOffOutlinedIcon sx={{ fontSize: 18 }} />
           <p style={{ margin: 0 }}>{t("manage_token_display")}</p>
         </XStack>
-        }
+      }
       tableLoaderComponent={<TokenBalanceTableLoader />}
       widgets={
         <div>
@@ -84,10 +83,10 @@ export function TokenBalances() {
             blockchain={blockchain}
             publicKey={publicKey}
             swapEnabled={swapEnabled}
-            />
+          />
         </div>
-        }
-      />
+      }
+    />
   );
 }
 

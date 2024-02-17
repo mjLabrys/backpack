@@ -10,6 +10,11 @@ import { UniswapTokenList } from "./tokens-uniswap";
 // Dummy representation of native ETH.
 export const ETH_NATIVE_MINT = ethers.constants.AddressZero;
 
+// 0x swap's placeholder address for ETH
+export const ZERO_X_ETH_PLACEHOLDER =
+  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+export const DAI_MINT = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
+
 export async function fetchEthereumBalances(
   provider: ethers.providers.Provider,
   publicKey: string

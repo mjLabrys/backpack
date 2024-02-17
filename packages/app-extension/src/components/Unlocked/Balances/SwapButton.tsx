@@ -1,4 +1,4 @@
-import { Blockchain } from "@coral-xyz/common";
+import type { Blockchain } from "@coral-xyz/common";
 import { useTranslation } from "@coral-xyz/i18n";
 import { useTheme } from "@coral-xyz/tamagui";
 import { SwapHoriz } from "@mui/icons-material";
@@ -65,7 +65,6 @@ const SwapButtonComponent = ({
 };
 
 const SwapButtonIfTheTokenIsSwappable = ({
-  blockchain,
   address,
   assetId,
 }: {
@@ -73,13 +72,10 @@ const SwapButtonIfTheTokenIsSwappable = ({
   address?: string;
   assetId?: string;
 }) => {
-  const canSwap = blockchain === Blockchain.SOLANA;
-
-  //
   // Note: if address is undefined, then we are in the main balances view.
   //       So automatically show the swap button.
   //
-  return address === undefined || canSwap ? (
+  return address === undefined ? (
     <SwapButtonComponent isLoading={false} assetId={assetId} />
   ) : // There are no Jupiter Routes for this token, so hide the button
   null;

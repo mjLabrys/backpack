@@ -1272,6 +1272,15 @@ export const UniswapTokenList = {
       },
     },
     {
+      chainId: 1,
+      address: "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+      name: "Lido Staked Ether",
+      symbol: "STETH",
+      decimals: 18,
+      logoURI:
+        "https://assets.coingecko.com/coins/images/13442/thumb/steth_logo.png?1608607546",
+    },
+    {
       name: "ChainLink Token",
       address: "0x514910771AF9Ca656af840dff83E8264EcF986CA",
       symbol: "LINK",
@@ -4711,6 +4720,24 @@ export const UniswapTokenList = {
           },
         },
       },
+    },
+    {
+      chainId: 1,
+      address: "0xD33526068D116cE69F19A9ee46F0bd304F21A51f",
+      name: "Rocket Pool",
+      symbol: "RPL",
+      decimals: 18,
+      logoURI:
+        "https://assets.coingecko.com/coins/images/2090/thumb/rocket_pool_%28RPL%29.png?1637662441",
+    },
+    {
+      chainId: 1,
+      address: "0xae78736Cd615f374D3085123A210448E74Fc6393",
+      name: "Rocket Pool ETH",
+      symbol: "RETH",
+      decimals: 18,
+      logoURI:
+        "https://assets.coingecko.com/coins/images/20764/thumb/reth.png?1637652366",
     },
     {
       chainId: 137,

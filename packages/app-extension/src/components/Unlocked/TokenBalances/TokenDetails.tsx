@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Blockchain } from "@coral-xyz/common";
 import { BalanceDetails } from "@coral-xyz/data-components";
 import { useActiveWallet, useIsDevnet, useSolanaCtx } from "@coral-xyz/recoil";
+import { swapEnabledNetworks } from "@coral-xyz/secure-background/legacyCommon";
 import { SOL_NATIVE_MINT } from "@coral-xyz/secure-clients/legacyCommon";
 import { useNavigation } from "@react-navigation/native";
 
@@ -31,7 +32,7 @@ export function TokenDetails({
   const { connectionCluster } = useSolanaCtx();
   const isDevnet = useIsDevnet();
   const navigation = useNavigation<any>();
-  const swapEnabled = blockchain === Blockchain.SOLANA && !isDevnet;
+  const swapEnabled = swapEnabledNetworks.includes(blockchain) && !isDevnet;
 
   const isSolanaNativeToken =
     token === SOL_NATIVE_MINT && blockchain === Blockchain.SOLANA;

@@ -1,7 +1,7 @@
-import type {
+import {
   Blockchain,
-  BlockchainPreferences,
-  Preferences,
+  type BlockchainPreferences,
+  type Preferences,
 } from "@coral-xyz/common";
 
 import { getEnabledBlockchainConfigs } from "./blockchains";
@@ -10,6 +10,7 @@ export const DEFAULT_DARK_MODE = false;
 export const DEFAULT_DEVELOPER_MODE = false;
 export const DEFAULT_AGGREGATE_WALLETS = false;
 export const DEFAULT_AUTO_LOCK_INTERVAL_SECS = 10 * 60;
+export const swapEnabledNetworks = [Blockchain.SOLANA, Blockchain.ETHEREUM];
 
 export function defaultPreferences(): Preferences {
   const blockchains = Object.fromEntries(

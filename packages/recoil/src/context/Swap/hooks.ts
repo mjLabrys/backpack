@@ -1,7 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { useFragment, useQuery } from "@apollo/client";
 import { Blockchain } from "@coral-xyz/common";
-import { SOL_NATIVE_MINT } from "@coral-xyz/secure-clients/legacyCommon";
+import {
+  ETH_NATIVE_MINT,
+  SOL_NATIVE_MINT,
+} from "@coral-xyz/secure-clients/legacyCommon";
 import type { BigNumber } from "ethers";
 import { ethers } from "ethers";
 import { useAsyncEffect } from "use-async-effect";
@@ -84,7 +87,10 @@ export const GET_SWAP_OUTPUT_TOKENS = gql(`
 `);
 
 // TODO: need to test if this works for asset ids for other chains.
-export function useMintForAssetId(id?: string): string | null {
+export function useMintForAssetId(
+  id?: string,
+  blockchain: Blockchain = Blockchain.SOLANA
+): string | null {
   const { data } = useFragment({
     fragment: TokenMintForAssetIdFragment,
     from: {
@@ -94,7 +100,14 @@ export function useMintForAssetId(id?: string): string | null {
   });
 
   if (!id) {
-    return SOL_NATIVE_MINT;
+    switch (blockchain) {
+      case Blockchain.SOLANA:
+        return SOL_NATIVE_MINT;
+      case Blockchain.ETHEREUM:
+        return ETH_NATIVE_MINT;
+      default:
+        return null;
+    }
   }
 
   return data?.token ?? null;
@@ -399,6 +412,15 @@ export function useFromToken({
       return t.token === fromMint;
     }) ?? null;
 
+  console.log("------disdiopsdksdl: ", {
+    from,
+    to,
+    fromToken,
+    fromTokens,
+    fromMint,
+    isLoadingFromTokens,
+    isLoadingTokenBalances,
+  });
   return {
     fromToken,
     isLoading: isLoadingFromTokens || isLoadingTokenBalances,
